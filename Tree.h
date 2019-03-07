@@ -34,6 +34,15 @@ private:
 	static std::exception m_NotHaveLeft;
 	static std::exception m_NotHaveRight;
 
+	struct PrintCacheItem
+	{
+		PrintCacheItem(int _num, int _level):num(_num), level(_level)
+		{}
+
+		int num;
+		int level;
+	};
+
 public:
 	Tree();
 
@@ -70,6 +79,8 @@ private:
 	void collectNumbers(std::vector<int> &collector);
 
 	void countSomeSelf(int &counter);
+
+	void collectPrintCache(std::vector<PrintCacheItem> &items, int level);
 };
 
 } /* namespace ariel */

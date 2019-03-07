@@ -27,7 +27,6 @@ std::exception Tree::m_NotHaveLeft = std::runtime_error("the node not have left!
 
 std::exception Tree::m_NotHaveRight = std::runtime_error("the not not have right!");
 
-
 Tree::Tree()
 {
 	init(NULL);
@@ -55,7 +54,7 @@ Tree& Tree::insert(int n)
 
 	if(m_root == this)
 	{
-		if(isValueAlreadyExist(n) == NULL)
+		if(isValueAlreadyExist(n) != NULL)
 		{
 			throw m_ValueAlreadyExistedException;
 		}
@@ -64,13 +63,16 @@ Tree& Tree::insert(int n)
 	if(m_valueAmount <= 0)
 	{
 		m_value[m_valueAmount++] = n;
+		printf("insert value %d here\n", m_value[0]);
 	}
 	else if(n < m_value[0])
 	{
+		printf("will insert value %d left of %d\n", n, m_value[0]);
 		next = &m_left;
 	}
 	else if(n > m_value[0])
 	{
+		printf("will insert value %d right of %d\n", n, m_value[0]);
 		next = &m_right;
 	}
 
@@ -78,7 +80,7 @@ Tree& Tree::insert(int n)
 	{
 		if(next[0] == NULL)
 		{
-			next[0] = new Tree();
+			next[0] = new Tree(this);
 		}
 		next[0]->insert(n);
 	}
@@ -169,7 +171,7 @@ int Tree::size()
 
 	countSomeSelf(counter);
 
-	return 0;
+	return counter;
 }
 
 void Tree::countSomeSelf(int &counter)
@@ -239,6 +241,29 @@ int Tree::right(int n)
 
 void Tree::print()
 {
+	std::vector<PrintCacheItem> items;
+	collectPrintCache(items, 0);
+
+	// TODO sort
+	// TODO print levels
+}
+
+void Tree::collectPrintCache(std::vector<PrintCacheItem> &items, int level)
+{
+	if(m_valueAmount > 0)
+	{
+		items.push_back(PrintCacheItem(m_value[0], level));
+	}
+
+	if(m_left != NULL)
+	{
+		m_left->collectPrintCache(items, level+1);
+	}
+
+	if(m_right != NULL)
+	{
+		m_right->collectPrintCache(items, level+1);
+	}
 
 }
 

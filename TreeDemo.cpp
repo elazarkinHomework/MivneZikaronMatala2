@@ -32,7 +32,9 @@ int main() {
          << threetree.right(5)    // should print 7
          //<< threetree.insert(5)    // should throw an exception: "5 already exists"
          << endl;
-  } catch (...) {
-    cout << "Caught exception!" << endl;
+  }
+  catch (std::exception &e)
+  {
+    cout << "Caught exception!"<< e.what() << endl;
   }
 }
