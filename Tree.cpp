@@ -15,7 +15,18 @@
 namespace ariel
 {
 
-std::exception Tree::m_ValueAlreadyExisted = std::runtime_error("Error: This value already existed in tree!");
+std::exception Tree::m_ValueAlreadyExistedException = std::runtime_error("Error: This value already existed in tree!");
+
+std::exception Tree::m_RemoveNonExistValueException = std::runtime_error("Error: Can't remove non exist value");
+
+std::exception Tree::m_TreeNotInited = std::runtime_error("The root still not inited!");
+
+std::exception Tree::m_RootNotHaveParent = std::runtime_error("root not have parent!");
+
+std::exception Tree::m_NotHaveLeft = std::runtime_error("the node not have left!");
+
+std::exception Tree::m_NotHaveRight = std::runtime_error("the not not have right!");
+
 
 Tree::Tree()
 {
@@ -46,7 +57,7 @@ Tree& Tree::insert(int n)
 	{
 		if(isValueAlreadyExist(n) == NULL)
 		{
-			throw m_ValueAlreadyExisted;
+			throw m_ValueAlreadyExistedException;
 		}
 	}
 
@@ -75,39 +86,155 @@ Tree& Tree::insert(int n)
 	return *m_root;
 }
 
-void Tree::remove(int i)
+void Tree::remove(int n)
 {
+	Tree *tree = isValueAlreadyExist(n);
 
+	if(tree == NULL)
+	{
+		throw m_RemoveNonExistValueException;
+	}
+	else
+	{
+		std::vector<int> container;
+
+		if(tree->m_left != NULL)
+		{
+			tree->m_left->collectNumbers(container);
+			delete m_left;
+
+			m_left = NULL;
+		}
+
+		if(tree->m_right != NULL)
+		{
+			tree->m_right->collectNumbers(container);
+			delete m_right;
+
+			m_right = NULL;
+		}
+
+		m_valueAmount = 0;
+
+		if(!container.empty())
+		{
+			for(int i = 0; i < container.size(); i++)
+			{
+				insert(container[i]);
+			}
+		}
+		else if(tree != m_root)
+		{
+			Tree *parentTree = tree->m_parent;
+
+			if(parentTree->m_left == tree)
+			{
+				delete parentTree->m_left;
+				parentTree->m_left = NULL;
+			}
+			else
+			{
+				delete parentTree->m_right;
+				parentTree->m_right = NULL;
+			}
+		}
+		else
+		{
+			// to root node we do nothing
+		}
+	}
+}
+
+void Tree::collectNumbers(std::vector<int> &collector)
+{
+	if(m_valueAmount > 0)
+	{
+		collector.push_back(m_value[0]);
+
+		if(m_left != NULL)
+		{
+			m_left->collectNumbers(collector);
+		}
+
+		if(m_right != NULL)
+		{
+			m_right->collectNumbers(collector);
+		}
+	}
 }
 
 int Tree::size()
 {
+	int counter = 0;
+
+	countSomeSelf(counter);
+
 	return 0;
+}
+
+void Tree::countSomeSelf(int &counter)
+{
+	if(m_valueAmount > 0) counter++;
+
+	if(m_left != NULL) m_left->countSomeSelf(counter);
+	if(m_right != NULL) m_right->countSomeSelf(counter);
 }
 
 bool Tree::contains(int n)
 {
+	if(m_valueAmount > 0 && m_value[0] == n) return true;
+
+	if(m_left != NULL && m_left->contains(n)) return true;
+	if(m_right != NULL && m_right->contains(n)) return true;
+
 	return false;
 }
 
 int Tree::root()
 {
-	return 0;
+	if(m_valueAmount > 0)return m_value[0];
+	else
+	{
+		throw m_TreeNotInited;
+	}
 }
 
-int Tree::parent(int i)
+int Tree::parent(int n)
 {
-	return 0;
+	Tree *tree = isValueAlreadyExist(n);
+
+	if(tree != NULL && tree != m_root && tree->m_parent->m_valueAmount > 0)
+	{
+		return tree->m_parent->m_value[0];
+	}
+	else
+	{
+		throw m_RootNotHaveParent;
+	}
 }
 
-int Tree::left(int i)
+int Tree::left(int n)
 {
-	return 0;
+	Tree *tree = isValueAlreadyExist(n);
+
+	if(tree->m_left == NULL || tree->m_left->m_valueAmount < 0)
+	{
+		throw m_NotHaveLeft;
+	}
+
+	return tree->m_left->m_value[0];
 }
 
-int Tree::right(int i)
+int Tree::right(int n)
 {
-	return 0;
+	Tree *tree = isValueAlreadyExist(n);
+
+	if(tree->m_right == NULL || tree->m_right->m_valueAmount < 0)
+	{
+		throw m_NotHaveRight;
+	}
+
+	return tree->m_right->m_value[0];
 }
 
 void Tree::print()
@@ -116,6 +243,7 @@ void Tree::print()
 }
 
 void Tree::init(Tree *parent)
+
 {
 	m_root = parent == NULL ? this:parent->m_root;
 	m_parent = parent;

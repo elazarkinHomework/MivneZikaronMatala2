@@ -9,6 +9,7 @@
 #define TREE_H_
 
 #include <stdexcept>
+#include <vector>
 
 namespace ariel
 {
@@ -26,7 +27,12 @@ private:
 	Tree *m_root;
 	Tree *m_parent;
 
-	static std::exception m_ValueAlreadyExisted;
+	static std::exception m_ValueAlreadyExistedException;
+	static std::exception m_RemoveNonExistValueException;
+	static std::exception m_TreeNotInited;
+	static std::exception m_RootNotHaveParent;
+	static std::exception m_NotHaveLeft;
+	static std::exception m_NotHaveRight;
 
 public:
 	Tree();
@@ -37,7 +43,7 @@ public:
 
 	Tree& insert(int n);
 
-	void remove(int i);
+	void remove(int n);
 
 	int size();
 
@@ -60,6 +66,10 @@ private:
 	void init(Tree *parent);
 
 	Tree *isValueAlreadyExist(int n);
+
+	void collectNumbers(std::vector<int> &collector);
+
+	void countSomeSelf(int &counter);
 };
 
 } /* namespace ariel */
