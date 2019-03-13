@@ -12,6 +12,8 @@
 
 #include <string>
 
+#include <algorithm>
+
 namespace ariel
 {
 
@@ -242,33 +244,114 @@ int Tree::right(int n)
 void Tree::print()
 {
 	std::vector<PrintCacheItem> items;
-	collectPrintCache(items, 0);
+	collectPrintCache(items, 0, 0);
 
-	// TODO sort
-	// TODO print levels
+	if(!items.empty())
+	{
+		int SPACE = 4;
+		int min_x = 0, max_x = 0;
+		int curr_x, curr_level = 0;
+		std::sort(items.begin(), items.end());
+
+		for(int i = 0; i < items.size(); i++)
+		{
+			min_x = items[i].x < min_x ? items[i].x:min_x;
+			max_x = items[i].x > max_x ? items[i].x:max_x;
+		}
+
+		curr_x = min_x-1;
+
+		for(int i = 0; i < items.size(); i++)
+		{
+			while(curr_level < items[i].level || (curr_level == items[i].level && curr_x < items[i].x))
+			{
+				printf("%3s", "");
+				curr_x++;
+
+				if(curr_x > max_x)
+				{
+					curr_x = min_x-1;
+					curr_level++;
+					printf("\n");
+				}
+			}
+			printf("%d", items[i].num);
+		}
+
+		printf("\n\n");
+	}
 }
 
-void Tree::collectPrintCache(std::vector<PrintCacheItem> &items, int level)
+Tree *Tree::clone()
 {
-	if(m_valueAmount > 0)
+	Tree *out = new Tree();
+
+	return out;
+}
+
+void Tree::cloneFill(Tree *src, Tree *dst)
+{
+	if(src->m_valueAmount > 0)
 	{
-		items.push_back(PrintCacheItem(m_value[0], level));
+		dst->m_valueAmount = 0;
+		dst->m_value[dst->m_valueAmount++] = src->m_value[0];
+	}
+	else if(this != m_root)
+	{
+		fprintf(stderr, "cloneFill check code!(1)\n");
 	}
 
 	if(m_left != NULL)
 	{
-		m_left->collectPrintCache(items, level+1);
+		if(dst->m_left != NULL)
+		{
+			delete dst->m_left;
+		}
+		else
+		{
+			fprintf(stderr, "cloneFill check code! (2)\n");
+		}
+
+		dst->m_left = new Tree(dst);
+		cloneFill(src->m_left, dst->m_left);
 	}
 
 	if(m_right != NULL)
 	{
-		m_right->collectPrintCache(items, level+1);
+		if(dst->m_right != NULL)
+		{
+			delete dst->m_right;
+		}
+		else
+		{
+			fprintf(stderr, "cloneFill check code! (3)\n");
+		}
+
+		dst->m_right = new Tree(dst);
+		cloneFill(src->m_right, dst->m_right);
+	}
+}
+
+void Tree::collectPrintCache(std::vector<PrintCacheItem> &items, int x, int level)
+{
+	if(m_valueAmount > 0)
+	{
+		items.push_back(PrintCacheItem(m_value[0], x, level));
+	}
+
+	if(m_left != NULL)
+	{
+		m_left->collectPrintCache(items, x - 1, level+1);
+	}
+
+	if(m_right != NULL)
+	{
+		m_right->collectPrintCache(items, x + 1, level+1);
 	}
 
 }
 
 void Tree::init(Tree *parent)
-
 {
 	m_root = parent == NULL ? this:parent->m_root;
 	m_parent = parent;

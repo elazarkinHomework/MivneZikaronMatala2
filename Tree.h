@@ -36,12 +36,28 @@ private:
 
 	struct PrintCacheItem
 	{
-		PrintCacheItem(int _num, int _level):num(_num), level(_level)
+		PrintCacheItem(int _num, int _x, int _level):num(_num), level(_level), x(_x)
 		{}
 
 		int num;
 		int level;
+		int x;
+
+		bool operator<(PrintCacheItem &b)
+		{
+			if(level < b.level)
+			{
+				return true;
+			}
+			else if (level == b.level && x < b.x)
+			{
+				return true;
+			}
+			else return false;
+		}
 	};
+
+	void cloneFill(Tree *src, Tree *dst);
 
 public:
 	Tree();
@@ -68,6 +84,8 @@ public:
 
 	void print();
 
+	Tree *clone();
+
 	//ostream& operator<<(ostream& out, Tree& B)
 
 private:
@@ -80,7 +98,7 @@ private:
 
 	void countSomeSelf(int &counter);
 
-	void collectPrintCache(std::vector<PrintCacheItem> &items, int level);
+	void collectPrintCache(std::vector<PrintCacheItem> &items, int x, int level);
 };
 
 } /* namespace ariel */
