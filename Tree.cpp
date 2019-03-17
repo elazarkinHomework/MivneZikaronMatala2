@@ -5,7 +5,7 @@
  *      Author: elazar
  */
 
-#include "Tree.h"
+#include "Tree.hpp"
 
 #include <stdlib.h>
 #include <stdio.h>
