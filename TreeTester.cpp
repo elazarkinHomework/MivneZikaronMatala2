@@ -7,7 +7,7 @@
 #include <time.h>
 #include "Tree.hpp"
 
-#define TEST_CASE2(FUNC_NAME) {bool ret = FUNC_NAME();if(ret) fprintf(stdout, "%s test success!\n", #FUNC_NAME);}
+#define TEST_CASE2(FUNC_NAME) {bool ret = FUNC_NAME();fprintf(stdout, "%s test %s!\n", #FUNC_NAME, ret?"success":"fail");}
 
 class RandomNonEqualRandomNumbers
 {
@@ -103,7 +103,7 @@ bool TestEmptyTree()
 
 	tree.print();
 
-	if(tree.size() != arr.size())
+	if(tree.size() == arr.size())
 	{
 		return false;
 	}
