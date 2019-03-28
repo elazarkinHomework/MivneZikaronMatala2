@@ -8,7 +8,7 @@
 #include <iostream>
 using namespace std;
 
-#include "Tree.h"
+#include "Tree.hpp"
 
 int main() {
   try {

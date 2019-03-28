@@ -5,11 +5,18 @@ project (Homework2)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2")
 
 SET(
-	SOURCES
+	TREE_LIB_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/Tree.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/TreeDemo.cpp 
 )
 
-add_executable(TreeDemo ${SOURCES})
 
-target_link_libraries(TreeDemo pthread)
+SET(
+	TESTER_SOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/TreeTester.cpp 
+)
+
+add_library(TreeLib STATIC ${TREE_LIB_SOURCES})
+
+add_executable(TreeTester ${TESTER_SOURCES})
+
+target_link_libraries(TreeTester pthread TreeLib)
