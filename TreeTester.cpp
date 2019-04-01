@@ -103,7 +103,7 @@ bool TestEmptyTree()
 
 	tree.print();
 
-	if(tree.size() == arr.size())
+	if(tree.size() != arr.size())
 	{
 		return false;
 	}
@@ -111,15 +111,152 @@ bool TestEmptyTree()
 	return true;
 }
 
+bool TestInsert()
+{
+	for(int i = 0; i < 4; i++)
+	{
+		RandomNonEqualRandomNumbers arr((4<<i));
+		ariel::Tree tree;
+
+		int counter = 0;
+
+		for(int j = 0; j < arr.size()/2; j++)
+		{
+			try
+			{
+				tree.insert(arr[j]);
+			}
+			catch (std::exception &e)
+			{
+				return false;
+			}
+		}
+
+		if(tree.size() != arr.size()/2)
+		{
+			fprintf(stderr, "%s fail_1\n", __func__);
+			return false;
+		}
+
+		counter = 0;
+		for(int j = 0; j < arr.size()/2; j++)
+		{
+			try
+			{
+				tree.insert(arr[j]);
+			}
+			catch (std::exception &e)
+			{
+				counter++;
+			}
+		}
+
+		if(counter != arr.size()/2)
+		{
+			fprintf(stderr, "%s fail_2\n", __func__);
+			return false;
+		}
+
+		counter = 0;
+		for(int j = arr.size()/2-1; j < arr.size(); j++)
+		{
+			try
+			{
+				tree.insert(arr[j]);
+			}
+			catch (std::exception &e)
+			{
+				counter++;
+			}
+		}
+
+		if(tree.size() != arr.size() || counter != 1)
+		{
+			fprintf(stderr, "%s fail_3 counter=%d\n", __func__, counter);
+			return false;
+		}
+
+		counter = 0;
+		for(int j = 0; j < arr.size(); j++)
+		{
+			try
+			{
+				tree.insert(arr[j]);
+			}
+			catch (std::exception &e)
+			{
+				counter++;
+			}
+		}
+
+		if(counter != arr.size())
+		{
+			fprintf(stderr, "%s fail_4\n", __func__);
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool TestRemove()
+{
+	for(int i = 0; i < 4; i++)
+	{
+		RandomNonEqualRandomNumbers arr((4<<i));
+		ariel::Tree tree;
+
+		for(int j = 0; j < arr.size(); j++)
+		{
+			try
+			{
+				tree.insert(arr[j]);
+			}
+			catch (std::exception &e)
+			{
+				return false;
+			}
+		}
+
+		tree.print();
+		arr.printArray();
+
+		for(int j = 0; j < arr.size()/2; j++)
+		{
+			try
+			{
+				tree.remove(arr[j]);
+			}
+			catch (std::exception &e)
+			{
+				fprintf(stderr, "%s error: %s\n", __func__, e.what());
+				return false;
+			}
+
+			tree.print();
+		}
+
+		if(tree.size() != arr.size()/2)
+		{
+			fprintf(stderr, "%s fail : tree size=%d should be %d\n", __func__, tree.size(), arr.size()/2);
+			tree.print();
+			return false;
+		}
+	}
+	return true;
+}
+
 int main()
 {
 	int counterError = 0;
 
-	srand(time(NULL));
+	//srand(time(NULL));
 
 	try
 	{
 		TEST_CASE2(TestEmptyTree)
+		TEST_CASE2(TestInsert)
+		TEST_CASE2(TestRemove)
 //		threetree.insert(5).insert(3).insert(7);
 //		cout << "threetree: size=" << threetree.size() << " root="
 //				<< threetree.root() << " data=" << endl;  // size=3, root=5.

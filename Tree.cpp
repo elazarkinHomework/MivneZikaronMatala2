@@ -65,16 +65,14 @@ Tree& Tree::insert(int n)
 	if(m_valueAmount <= 0)
 	{
 		m_value[m_valueAmount++] = n;
-		printf("insert value %d here\n", m_value[0]);
+//		printf("insert value %d here\n", m_value[0]);
 	}
 	else if(n < m_value[0])
 	{
-		printf("will insert value %d left of %d\n", n, m_value[0]);
 		next = &m_left;
 	}
 	else if(n > m_value[0])
 	{
-		printf("will insert value %d right of %d\n", n, m_value[0]);
 		next = &m_right;
 	}
 
@@ -101,30 +99,31 @@ void Tree::remove(int n)
 	else
 	{
 		std::vector<int> container;
+		container.clear();
 
 		if(tree->m_left != NULL)
 		{
 			tree->m_left->collectNumbers(container);
-			delete m_left;
+			delete tree->m_left;
 
-			m_left = NULL;
+			tree->m_left = NULL;
 		}
 
 		if(tree->m_right != NULL)
 		{
 			tree->m_right->collectNumbers(container);
-			delete m_right;
+			delete tree->m_right;
 
-			m_right = NULL;
+			tree->m_right = NULL;
 		}
 
-		m_valueAmount = 0;
+		tree->m_valueAmount = 0;
 
 		if(!container.empty())
 		{
 			for(int i = 0; i < container.size(); i++)
 			{
-				insert(container[i]);
+				tree->insert(container[i]);
 			}
 		}
 		else if(tree != m_root)
